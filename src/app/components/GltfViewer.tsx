@@ -12,7 +12,7 @@ function Model() {
 export default function GltfViewer() {
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [2, 2, 2], fov: 50 }}>
+      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
