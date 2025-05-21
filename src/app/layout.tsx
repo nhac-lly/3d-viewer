@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="w-screen h-screen">
-          <ul className="flex flex-row gap-4 fixed top-0 left-0 z-10">
+          <ul className="flex flex-row gap-4 fixed top-0 left-0 z-20">
             <li>
               <Link href="/">Home</Link>
             </li>
