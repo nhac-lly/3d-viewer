@@ -1,0 +1,40 @@
+"use client";
+
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useEnvironment, useGLTF, Select, Text } from "@react-three/drei";
+import React, { Suspense, useState } from "react";
+
+function Model() {
+  const gltf = useGLTF("/Qualcomm_Model_v1_fix02.gltf");
+  const env = useEnvironment({ preset: "city" })
+  const [selected, setSelected] = useState<string | null>(null);
+
+  return <group position={[0, 0, 0]}>
+    {selected && <Text position={[0, 5, 0]} fontSize={2} color="black">{selected}</Text>}
+    {Object.entries(gltf.nodes).map(([key, node]: [string, any]) => (
+      <Select key={key} onPointerOver={() =>{
+        console.log([key, node]);
+        setSelected(key)}} onPointerOut={() => setSelected(null)}>
+      <mesh geometry={node.geometry} material={node.material} material-envMap={env}>
+        {/* <boxGeometry /> */}
+        {/* <meshStandardMaterial color="red" /> */}
+      </mesh> 
+      </Select>
+    ))}
+  </group>;
+}
+
+export default function MeshViewer() {
+  return (
+      <div className="w-full h-full">
+        <Canvas camera={{ position: [5, 5, 5], fov: 90 }}>
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <Suspense fallback={null}>
+          <Model />
+        </Suspense>
+        <OrbitControls />
+      </Canvas>
+    </div>
+  );
+} 
