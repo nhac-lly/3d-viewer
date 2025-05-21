@@ -1,8 +1,9 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useEnvironment, useGLTF, Select, Text } from "@react-three/drei";
+import { OrbitControls, useEnvironment, useGLTF, Select, Text, Environment } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
+import { Mesh } from "three";
 
 function Model() {
   const gltf = useGLTF("/Qualcomm_Model_v1_fix02.gltf");
@@ -11,16 +12,19 @@ function Model() {
 
   return <group position={[0, 0, 0]}>
     {selected && <Text position={[0, 5, 0]} fontSize={2} color="black">{selected}</Text>}
-    {Object.entries(gltf.nodes).map(([key, node]: [string, any]) => (
-      <Select key={key} onPointerOver={() =>{
-        console.log([key, node]);
-        setSelected(key)}} onPointerOut={() => setSelected(null)}>
-      <mesh geometry={node.geometry} material={node.material} material-envMap={env}>
-        {/* <boxGeometry /> */}
-        {/* <meshStandardMaterial color="red" /> */}
-      </mesh> 
-      </Select>
-    ))}
+    {Object.entries(gltf.nodes).map(([key, node]) => {
+        const newNode = node as Mesh;
+        return (
+            <Select key={key} onPointerOver={() =>{
+              console.log([key, node]);
+              setSelected(key)}} onPointerOut={() => setSelected(null)}>
+            <mesh geometry={newNode.geometry} material={newNode.material} material-envMap={env}>
+              {/* <boxGeometry /> */}
+              {/* <meshStandardMaterial color="red" /> */}
+            </mesh> 
+            </Select>
+          )
+    })}
   </group>;
 }
 
@@ -34,6 +38,7 @@ export default function MeshViewer() {
           <Model />
         </Suspense>
         <OrbitControls />
+        <Environment preset="city" />
       </Canvas>
     </div>
   );
