@@ -341,13 +341,13 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
             </button>
           </Html>
 
-          <Html center>
+          {/* <Html center>
             <div className="text-white pointer-events-none">
               {isDragging ? 'Dragging - Looking Around' : 'Click and Drag to Look Around'}
               <br />
               Press &apos;E&apos; to toggle eye level
             </div>
-          </Html>
+          </Html> */}
         </>
       );
     default:
