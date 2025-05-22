@@ -36,6 +36,9 @@ export default function RootLayout({
             <li>
               <Link href="/by-mesh">By Mesh</Link>
             </li>
+            <li>
+              <Link href="/by-char">By Character</Link>
+            </li>
           </ul>
           {children}
         </div>
