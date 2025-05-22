@@ -1,9 +1,10 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useEnvironment, useGLTF, Select, Text, Environment } from "@react-three/drei";
+import { useEnvironment, useGLTF, Select, Text, Environment } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
 import { Mesh } from "three";
+import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
 
 function Model() {
   const gltf = useGLTF("/Qualcomm_Model_v1_fix02.gltf");
@@ -18,7 +19,7 @@ function Model() {
             <Select key={key} onPointerOver={() =>{
               console.log([key, node]);
               setSelected(key)}} onPointerOut={() => setSelected(null)}>
-            <mesh geometry={newNode.geometry} material={newNode.material} material-envMap={env}>
+            <mesh geometry={newNode.geometry} material={newNode.material} position={newNode.position} material-envMap={env}>
               {/* <boxGeometry /> */}
               {/* <meshStandardMaterial color="red" /> */}
             </mesh> 
@@ -29,17 +30,20 @@ function Model() {
 }
 
 export default function MeshViewer() {
+  const [controlType, setControlType] = useState<ControlType>('orbit');
+
   return (
       <div className="w-full h-full">
+        <ControlSelector type={controlType} onChange={setControlType} />
         <Canvas camera={{ position: [5, 5, 5], fov: 90 }}>
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
           <Model />
         </Suspense>
-        <OrbitControls />
+        <CameraControls type={controlType} />
         <Environment preset="city" />
       </Canvas>
     </div>
   );
-} 
+}

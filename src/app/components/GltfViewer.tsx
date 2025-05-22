@@ -1,8 +1,9 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import React, { Suspense } from "react";
+import { useGLTF } from "@react-three/drei";
+import React, { Suspense, useState } from "react";
+import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
 
 function Model() {
   const gltf = useGLTF("/Qualcomm_Model_v1_fix02.gltf");
@@ -10,15 +11,18 @@ function Model() {
 }
 
 export default function GltfViewer() {
+  const [controlType, setControlType] = useState<ControlType>('orbit');
+
   return (
     <div className="w-full h-full">
+      <ControlSelector type={controlType} onChange={setControlType} />
       <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
           <Model />
         </Suspense>
-        <OrbitControls />
+        <CameraControls type={controlType} />
       </Canvas>
     </div>
   );
