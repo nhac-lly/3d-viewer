@@ -8,11 +8,12 @@ import {
   FlyControls, 
   MapControls, 
   DragControls,
-  PointerLockControls,
   TransformControls,
-  ArcballControls
+  ArcballControls,
+  Html
 } from '@react-three/drei';
 import { MOUSE } from 'three';
+import { useThree } from '@react-three/fiber';
 
 export type ControlType = 
   | 'orbit' 
@@ -23,7 +24,8 @@ export type ControlType =
   | 'drag'
   | 'pointerLock'
   | 'transform'
-  | 'arcball';
+  | 'arcball'
+  | 'dragFPS';
 
 interface ControlSelectorProps {
   type: ControlType;
@@ -47,6 +49,7 @@ export function ControlSelector({ type, onChange }: ControlSelectorProps) {
         <option value="pointerLock">Pointer Lock Controls</option>
         <option value="transform">Transform Controls</option>
         <option value="arcball">Arcball Controls</option>
+        <option value="dragFPS">Drag FPS Controls</option>
       </select>
     </div>
   );
@@ -55,34 +58,36 @@ export function ControlSelector({ type, onChange }: ControlSelectorProps) {
 export function CameraControls({ type }: { type: ControlType }) {
   const [isDragging, setIsDragging] = useState(false);
   const [showTransformControls, setShowTransformControls] = useState(false);
+  const { camera } = useThree();
 
   useEffect(() => {
-    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button === 0) { // Left click only
+        setIsDragging(true);
+      }
+    };
     const handleMouseUp = () => setIsDragging(false);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        // Rotate camera based on mouse movement
+        camera.rotation.y -= e.movementX * 0.002;
+        camera.rotation.x -= e.movementY * 0.002;
+        
+        // Clamp vertical rotation to prevent flipping
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+      }
+    };
 
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
-
-  // Handle pointer lock controls
-  useEffect(() => {
-    if (type === 'pointerLock') {
-      const handleClick = () => {
-        const canvas = document.querySelector('canvas');
-        if (canvas) {
-          canvas.requestPointerLock();
-        }
-      };
-
-      document.addEventListener('click', handleClick);
-      return () => document.removeEventListener('click', handleClick);
-    }
-  }, [type]);
+  }, [isDragging, camera]);
 
   switch (type) {
     case 'orbit':
@@ -156,7 +161,6 @@ export function CameraControls({ type }: { type: ControlType }) {
     case 'pointerLock':
       return (
         <>
-          <PointerLockControls />
           <mesh position={[0, 0, -5]}>
             <boxGeometry args={[1, 1, 1]} />
             <meshStandardMaterial color="hotpink" />
@@ -195,6 +199,20 @@ export function CameraControls({ type }: { type: ControlType }) {
           enablePan={false}
           enableZoom={true}
         />
+      );
+    case 'dragFPS':
+      return (
+        <>
+          <mesh position={[0, 0, -5]}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="hotpink" />
+          </mesh>
+          <Html center>
+            <div className="text-white pointer-events-none">
+              {isDragging ? 'Dragging - Looking Around' : 'Click and Drag to Look Around'}
+            </div>
+          </Html>
+        </>
       );
     default:
       return null;
