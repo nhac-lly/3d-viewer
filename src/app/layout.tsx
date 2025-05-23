@@ -42,6 +42,9 @@ export default function RootLayout({
             <li>
               <Link href="/exhibition-hall">Exhibition Hall</Link>
             </li>
+            <li>
+              <Link href="/environment">Environment</Link>
+            </li>
           </ul>
           {children}
         </div>
