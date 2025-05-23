@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="w-screen h-screen">
-          <ul className="flex flex-row gap-4 fixed top-0 left-0 z-20">
+          <ul className="flex flex-row gap-4 fixed top-0 left-0 z-20 p-4 bg-white/80 backdrop-blur-sm">
             <li>
               <Link href="/">Home</Link>
             </li>
@@ -38,6 +38,9 @@ export default function RootLayout({
             </li>
             <li>
               <Link href="/by-char">By Character</Link>
+            </li>
+            <li>
+              <Link href="/exhibition-hall">Exhibition Hall</Link>
             </li>
           </ul>
           {children}
