@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, Environment, PerspectiveCamera, Lightformer, ContactShadows } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three';
 
 function ExhibitionHall({ showRoof }: { showRoof: boolean }) {
