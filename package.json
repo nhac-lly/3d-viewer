@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "git lfs pull && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -28,5 +28,16 @@
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "vercel": {
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/node",
+        "config": {
+          "installCommand": "git lfs pull && npm install"
+        }
+      }
+    ]
   }
 }
