@@ -1,12 +1,12 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { Environment, useGLTF } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
 import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
 
 function Model() {
-  const gltf = useGLTF("/Qualcomm_Model_v1_fix02.gltf");
+  const gltf = useGLTF("/hall/hall.gltf");
   return <primitive object={gltf.scene} />;
 }
 
@@ -37,6 +37,7 @@ export default function GltfViewer() {
           <Model />
         </Suspense>
         <CameraControls type={controlType} cameraPositions={cameraPositions} />
+        <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
       </Canvas>
       {controlType === 'dragFPS' && (
         <CameraPositionForm onSubmit={handleAddCameraPosition} />
