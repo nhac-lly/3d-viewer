@@ -1,4 +1,4 @@
-import CharacterViewer from "../components/CharacterViewer";
+import CharacterViewer from "../../components/CharacterViewer";
 
 export default function ByChar() {
   return (

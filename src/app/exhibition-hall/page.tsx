@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 const ExhibitionHallViewer = dynamic(
-  () => import('@/app/components/ExhibitionHallViewer'),
+  () => import('@/components/ExhibitionHallViewer'),
   { ssr: false }
 );
 

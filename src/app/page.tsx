@@ -1,4 +1,4 @@
-import GltfViewer from "./components/GltfViewer";
+import GltfViewer from "../components/GltfViewer";
 
 export default function Home() {
   return (
