@@ -48,9 +48,7 @@ export default function RootLayout({
             </li>
           </ul> */}
           <NuqsAdapter>
-            <Suspense fallback={null}>
               {children}
-            </Suspense>
           </NuqsAdapter>
         </div>
       </body>

@@ -4,12 +4,31 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, useGLTF } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
 import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
-import { useQueryState } from "nuqs";
 
-function Model({ curModel }: { curModel: string }) {
+const Model = React.memo(({ curModel }: { curModel: string }) => {
+  if (curModel === 'home') {
+    // Load all models when 'home' is selected
+    const hall = useGLTF('/hall/hall.gltf');
+    const food = useGLTF('/food/food.gltf');
+    const tech = useGLTF('/tech/tech.gltf');
+    const wood = useGLTF('/wood/wood.gltf');
+
+    return (
+      <>
+        {/* Center model */}
+        <primitive object={hall.scene} position={[0, 0, 0]} />
+        {/* Corner models */}
+        <primitive object={food.scene} position={[-10, 0, 10]}/>
+        <primitive object={tech.scene} position={[10, 0, -10]} />
+        <primitive object={wood.scene} position={[-10, 0, -10]} />
+      </>
+    );
+  }
+
+  // Load single model for other cases
   const gltf = useGLTF(`/${curModel}/${curModel}.gltf`);
   return <primitive object={gltf.scene} />;
-}
+});
 
 // Define camera positions
 const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], label: string }> = [
@@ -22,7 +41,7 @@ const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], labe
 
 export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('orbit');
-  const [curModel, setCurModel] = useQueryState<string>('curModel', { defaultValue: 'hall', parse: (value) => value || 'hall' });
+  const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
@@ -36,6 +55,7 @@ export default function GltfViewer() {
         onChange={(e) => setCurModel(e.target.value)}
         className="bg-transparent border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1 text-black dark:text-white"
       >
+        <option value="home" className="bg-white dark:bg-black text-black dark:text-white">Home</option>
         <option value="hall" className="bg-white dark:bg-black text-black dark:text-white">Hall</option>
         <option value="food" className="bg-white dark:bg-black text-black dark:text-white">Food</option>
         <option value="tech" className="bg-white dark:bg-black text-black dark:text-white">Tech</option>
@@ -48,7 +68,7 @@ export default function GltfViewer() {
     <div className="w-full h-full">
       <SelectModel curModel={curModel} setCurModel={setCurModel} />
       <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>s
+      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
