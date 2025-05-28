@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, useGLTF } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
 import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
+import { useQueryState } from "nuqs";
 
 function Model({ curModel }: { curModel: string }) {
   const gltf = useGLTF(`/${curModel}/${curModel}.gltf`);
@@ -21,7 +22,7 @@ const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], labe
 
 export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('orbit');
-  const [curModel, setCurModel] = useState<string>('hall');
+  const [curModel, setCurModel] = useQueryState<string>('curModel', { defaultValue: 'hall', parse: (value) => value || 'hall' });
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {

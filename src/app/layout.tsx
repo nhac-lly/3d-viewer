@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +46,7 @@ export default function RootLayout({
               <Link href="/environment">Environment</Link>
             </li>
           </ul> */}
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
         </div>
       </body>
     </html>
