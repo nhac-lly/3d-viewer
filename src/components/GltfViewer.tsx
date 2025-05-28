@@ -31,8 +31,8 @@ export default function GltfViewer() {
 
   const SelectModel = ({ curModel, setCurModel }: { curModel: string, setCurModel: (model: string) => void }) => (
     <div className="fixed top-4 left-4 z-10 bg-white/80 dark:bg-black/80 p-2 rounded-lg shadow-lg">
-      <select 
-        value={curModel} 
+      <select
+        value={curModel}
         onChange={(e) => setCurModel(e.target.value)}
         className="bg-transparent border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1 text-black dark:text-white"
       >
@@ -45,11 +45,10 @@ export default function GltfViewer() {
   );
 
   return (
-    <Suspense fallback={null}>
-      <div className="w-full h-full">
-        <SelectModel curModel={curModel} setCurModel={setCurModel} />
-        <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
+    <div className="w-full h-full">
+      <SelectModel curModel={curModel} setCurModel={setCurModel} />
+      <ControlSelector type={controlType} onChange={setControlType} />
+      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>s
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
@@ -59,9 +58,8 @@ export default function GltfViewer() {
         <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
       </Canvas>
       {controlType === 'dragFPS' && (
-          <CameraPositionForm onSubmit={handleAddCameraPosition} />
-        )}
-      </div>
-    </Suspense>
+        <CameraPositionForm onSubmit={handleAddCameraPosition} />
+      )}
+    </div>
   );
-} 
+}
