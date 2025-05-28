@@ -45,9 +45,10 @@ export default function GltfViewer() {
   );
 
   return (
-    <div className="w-full h-full">
-      <SelectModel curModel={curModel} setCurModel={setCurModel} />
-      <ControlSelector type={controlType} onChange={setControlType} />
+    <Suspense fallback={null}>
+      <div className="w-full h-full">
+        <SelectModel curModel={curModel} setCurModel={setCurModel} />
+        <ControlSelector type={controlType} onChange={setControlType} />
       <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
@@ -58,8 +59,9 @@ export default function GltfViewer() {
         <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
       </Canvas>
       {controlType === 'dragFPS' && (
-        <CameraPositionForm onSubmit={handleAddCameraPosition} />
-      )}
-    </div>
+          <CameraPositionForm onSubmit={handleAddCameraPosition} />
+        )}
+      </div>
+    </Suspense>
   );
 } 
