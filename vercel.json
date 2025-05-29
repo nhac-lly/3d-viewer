@@ -2,11 +2,11 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "headers": [
         {
-            "source": "/(.*)",
+            "source": "/(.*)\\.(gltf|glb|bin|hdr|jpg|jpeg|png|webp)$",
             "headers": [
                 {
                     "key": "Cache-Control",
-                    "value": "public, max-age=60, s-maxage=31536000, stale-while-revalidate=61, stale-if-error=61"
+                    "value": "public, max-age=0, s-maxage=86400, must-revalidate"
                 }
             ]
         }
