@@ -71,9 +71,15 @@ const LoadingIndicator = ({ progress }: { progress: number }) => (
 );
 
 // Individual model component
-const SingleModel = ({ modelName, position = [0, 0, 0] }: { modelName: string, position?: [number, number, number] }) => {
-  const gltf = useGLTF(`/${modelName}/${modelName}.gltf`);
-  
+const SingleModel = ({ modelName, position = [0, 0, 0], transformed = true }: { modelName: string, position?: [number, number, number], transformed?: boolean }) => {
+   
+  let gltf = null;
+  if (transformed) {
+    gltf = useGLTF(`/${modelName}/${modelName}-transformed.glb`);
+  } else {
+    gltf = useGLTF(`/${modelName}/${modelName}.gltf`);
+  }
+
   useEffect(() => {
     gltf.scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
