@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Physics, RigidBody } from "@react-three/rapier";
 import React, { Suspense, useState } from "react";
-import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
+import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
 import Ecctrl from 'ecctrl';
 import { KeyboardControls } from '@react-three/drei';
 
@@ -90,9 +90,6 @@ export default function GltfViewer() {
           </Suspense>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
         </Canvas>
-        {controlType === 'dragFPS' && (
-          <CameraPositionForm onSubmit={handleAddCameraPosition} />
-        )}
       </div>
     </KeyboardControls>
   );

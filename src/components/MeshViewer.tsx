@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useEnvironment, useGLTF, Select, Text, Environment } from "@react-three/drei";
 import React, { Suspense, useState } from "react";
 import { Mesh } from "three";
-import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
+import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
 
 const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], label: string }> = [
     { position: [0, 3, 0], label: 'Start' },
@@ -57,9 +57,6 @@ export default function MeshViewer() {
         <CameraControls type={controlType} cameraPositions={cameraPositions} />
         <Environment preset="city" />
       </Canvas>
-      {controlType === 'dragFPS' && (
-        <CameraPositionForm onSubmit={handleAddCameraPosition} />
-      )}
     </div>
   );
 }

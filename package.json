@@ -13,6 +13,7 @@
     "@react-three/fiber": "^9.1.2",
     "@react-three/rapier": "^2.1.0",
     "ecctrl": "^1.0.92",
+    "leva": "^0.10.0",
     "next": "15.3.2",
     "nuqs": "^2.4.3",
     "react": "^19.0.0",

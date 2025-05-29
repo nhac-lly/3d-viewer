@@ -2,10 +2,18 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment, useGLTF, Html } from "@react-three/drei";
-import React, { Suspense, useState, useEffect, useRef } from "react";
-import { ControlSelector, CameraControls, CameraPositionForm, ControlType } from "./ControlSelector";
+import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
+import { CameraPositionForm } from "./CameraPositionForm";
 import * as THREE from 'three';
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Leva, monitor, useControls } from "leva";
+
+interface CameraPositionFormProps {
+  onSubmit: (position: [number, number, number], label: string) => void;
+  cameraPosition: THREE.Vector3;
+  onGoTo: (position: [number, number, number]) => void;
+}
 
 // Loading placeholder component
 const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, number, number] }) => {
@@ -17,7 +25,6 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
     
     // Rotate the placeholder
     meshRef.current.rotation.y += 0.01;
-    
     // Create a pulsing effect
     const time = state.clock.getElapsedTime();
     const scale = 1 + Math.sin(time * 2) * 0.1;
@@ -55,20 +62,6 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
     </group>
   );
 };
-
-// Loading indicator component
-const LoadingIndicator = ({ progress }: { progress: number }) => (
-  <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/90 dark:bg-black/90 p-4 rounded-lg shadow-lg">
-    <div className="text-black dark:text-white text-center mb-2">Loading Models...</div>
-    <div className="w-48 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
-      <div 
-        className="h-full bg-blue-500 rounded-full transition-all duration-300"
-        style={{ width: `${progress}%` }}
-      />
-    </div>
-    <div className="text-black dark:text-white text-center mt-2">{Math.round(progress)}%</div>
-  </div>
-);
 
 // Individual model component
 const SingleModel = ({ modelName, position = [0, 0, 0], transformed = true }: { modelName: string, position?: [number, number, number], transformed?: boolean }) => {
@@ -121,20 +114,147 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
 
 // Define camera positions
 const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], label: string }> = [
-  { position: [0, 3, 0], label: 'Start' },
   { position: [5, 3, 0], label: 'Right' },
   { position: [-5, 3, 0], label: 'Left' },
   { position: [0, 3, 5], label: 'Front' },
   { position: [0, 3, -5], label: 'Back' },
 ];
 
+// Create text texture function (moved from ControlSelector)
+function createTextTexture(text: string) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  canvas.width = 256;
+  canvas.height = 64;
+  
+  // Set background
+  context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Set text
+  context.font = '24px Arial';
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+}
+
+// Camera point component (moved from ControlSelector)
+function CameraPoint({ position, label, onClick }: { position: [number, number, number], label: string, onClick: () => void }) {
+  const texture = useMemo(() => createTextTexture(label), [label]);
+
+  return (
+    <group position={position}>
+      {/* Main clickable sphere */}
+      <mesh onClick={onClick}>
+        <sphereGeometry args={[0.2, 16, 16]} />
+        <meshStandardMaterial color="hotpink" />
+      </mesh>
+      {/* Visual indicator showing exact camera position */}
+      <mesh position={[0, 0, 0]} onClick={onClick}>
+        <ringGeometry args={[0.3, 0.4, 16]} />
+        <meshBasicMaterial color="yellow" transparent opacity={0.7} side={THREE.DoubleSide} />
+      </mesh>
+      {/* Label above */}
+      {texture && (
+        <mesh position={[0, 0.5, 0]}>
+          <planeGeometry args={[1, 0.25]} />
+          <meshBasicMaterial 
+            map={texture} 
+            transparent={true}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      )}
+    </group>
+  );
+}
+
+// Camera manager component that runs inside Canvas
+const CameraManager = ({ 
+  onAddCameraPosition, 
+  cameraPositions 
+}: { 
+  onAddCameraPosition: (position: [number, number, number], label: string) => void;
+  cameraPositions: Array<{ position: [number, number, number], label: string }>;
+}) => {
+  const { camera } = useThree();
+
+  useControls('Camera', {
+    position: monitor(() => 
+      `x: ${camera.position.x.toFixed(2)}, y: ${camera.position.y.toFixed(2)}, z: ${camera.position.z.toFixed(2)}`
+  ),
+    rotation: monitor(() => 
+      `x: ${camera.rotation.x.toFixed(2)}, y: ${camera.rotation.y.toFixed(2)}, z: ${camera.rotation.z.toFixed(2)}`
+    ),
+    quaternion: monitor(() => 
+      `x: ${camera.quaternion.x.toFixed(2)}, y: ${camera.quaternion.y.toFixed(2)}, z: ${camera.quaternion.z.toFixed(2)}, w: ${camera.quaternion.w.toFixed(2)}`
+    ),
+  });
+
+  // Store initial camera position and rotation
+  const initialCameraState = useRef({
+    position: new THREE.Vector3(),
+    quaternion: new THREE.Quaternion()
+  });
+
+  // Save initial camera state when component mounts
+  useEffect(() => {
+    initialCameraState.current = {
+      position: camera.position.clone(),
+      quaternion: camera.quaternion.clone()
+    };
+  }, [camera]);
+
+  // Move camera to a specific position
+  const moveCamera = (position: [number, number, number]) => {
+    console.log('moveCamera called with position:', position);
+    
+    // Create a new Vector3 for the target position
+    const targetPosition = new THREE.Vector3(position[0], position[1], position[2]);
+    
+    // Set camera position
+    camera.position.copy(targetPosition);
+    
+    // Set quaternion to look straight ahead (identity quaternion)
+    camera.quaternion.set(0, 0, 0, 1);
+    
+    // Force camera update
+    camera.updateMatrixWorld(true);
+  };
+
+  return (
+    <>
+      {/* Clickable camera points */}
+      {cameraPositions.map((point, index) => (
+        <CameraPoint
+          key={`preset-${index}`}
+          position={point.position as [number, number, number]}
+          label={point.label}
+          onClick={() => moveCamera(point.position as [number, number, number])}
+        />
+      ))}
+    </>
+  );
+};
+
 export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('orbit');
   const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
+  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(20, 20, 20));
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
+  };
+
+  const handleGoTo = (position: [number, number, number]) => {
+    setCameraPosition(new THREE.Vector3(...position));
   };
 
   const SelectModel = ({ curModel, setCurModel }: { curModel: string, setCurModel: (model: string) => void }) => (
@@ -157,18 +277,23 @@ export default function GltfViewer() {
     <div className="w-full h-full">
       <SelectModel curModel={curModel} setCurModel={setCurModel} />
       <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas camera={{ position: [20, 20, 20], fov: 50 }}>
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
+      <Canvas camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50 }}>
+        <CameraManager 
+          onAddCameraPosition={handleAddCameraPosition}
+          cameraPositions={cameraPositions}
+        />
         <Suspense fallback={<LoadingPlaceholder />}>
           <Model curModel={curModel} />
         </Suspense>
         <CameraControls type={controlType} cameraPositions={cameraPositions} />
         <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
       </Canvas>
-      {controlType === 'dragFPS' && (
-        <CameraPositionForm onSubmit={handleAddCameraPosition} />
-      )}
+      <CameraPositionForm 
+        onSubmit={handleAddCameraPosition} 
+        cameraPosition={cameraPosition}
+        onGoTo={handleGoTo}
+      />
+      <Leva />
     </div>
   );
 }
