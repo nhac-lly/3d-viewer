@@ -8,6 +8,10 @@ import { CameraPositionForm } from "./CameraPositionForm";
 import * as THREE from 'three';
 import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
+import { Model as HallModel } from "../models/Hall";
+import { Model as FoodModel } from "../models/Food";
+import { Model as TechModel } from "../models/Tech";
+import { Model as WoodModel } from "../models/Wood";
 
 interface CameraPositionFormProps {
   onSubmit: (position: [number, number, number], label: string) => void;
@@ -64,25 +68,19 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
 };
 
 // Individual model component
-const SingleModel = ({ modelName, position = [0, 0, 0], transformed = true }: { modelName: string, position?: [number, number, number], transformed?: boolean }) => {
-   
-  let gltf = null;
-  if (transformed) {
-    gltf = useGLTF(`/${modelName}/${modelName}-transformed.glb`);
-  } else {
-    gltf = useGLTF(`/${modelName}/${modelName}.gltf`);
+const SingleModel = ({ modelName, position = [0, 0, 0] }: { modelName: string, position?: [number, number, number] }) => {
+  switch (modelName) {
+    case 'hall':
+      return <HallModel position={position} />;
+    case 'food':
+      return <FoodModel position={position} />;
+    case 'tech':
+      return <TechModel position={position} />;
+    case 'wood':
+      return <WoodModel position={position} />;
+    default:
+      return null;
   }
-
-  useEffect(() => {
-    gltf.scene.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
-  }, [gltf]);
-
-  return <primitive object={gltf.scene} position={position} />;
 };
 
 const Model = React.memo(({ curModel }: { curModel: string }) => {
@@ -93,13 +91,13 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
           <SingleModel modelName="hall" position={[0, 0, 0]} />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[-10, 0, 10]} />}>
-          <SingleModel modelName="food" position={[-10, 0, 10]} />
+          <SingleModel modelName="food" position={[-10, 0.1, 10]} />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[10, 0, -10]} />}>
-          <SingleModel modelName="tech" position={[10, 0, -10]} />
+          <SingleModel modelName="tech" position={[10, 0.1, -10]} />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="wood" position={[-10, 0, -10]} />
+          <SingleModel modelName="wood" position={[-10, 0.1, -10]} />
         </Suspense>
       </>
     );
