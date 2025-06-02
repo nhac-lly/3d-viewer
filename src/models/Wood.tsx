@@ -162,7 +162,7 @@ type GLTFResult = GLTF & {
 }
 
 export function Model(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('/wood/wood-transformed.glb') as unknown as GLTFResult
+  const { nodes, materials } = useGLTF('/VR/wood/wood-transformed.glb') as unknown as GLTFResult
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Plane.geometry} material={materials.concrete_floor_worn_001} scale={[5, 1, 7]} />
@@ -261,4 +261,4 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/wood/wood-transformed.glb')
+useGLTF.preload('/VR/wood/wood-transformed.glb')

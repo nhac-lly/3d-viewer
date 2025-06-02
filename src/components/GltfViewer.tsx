@@ -12,6 +12,12 @@ import { Model as HallModel } from "../models/Hall";
 import { Model as FoodModel } from "../models/Food";
 import { Model as TechModel } from "../models/Tech";
 import { Model as WoodModel } from "../models/Wood";
+import { Model as DisplayLedModel } from "../models/Display_led";
+import { Model as DetmayModel } from "../models/Detmay";
+import { Model as SankhauModel } from "../models/Sankhau";
+import { Model as ThucongModel } from "../models/Thucong";
+import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
+
 
 interface CameraPositionFormProps {
   onSubmit: (position: [number, number, number], label: string) => void;
@@ -68,16 +74,26 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
 };
 
 // Individual model component
-const SingleModel = ({ modelName, position = [0, 0, 0] }: { modelName: string, position?: [number, number, number] }) => {
+const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0] }: { modelName: string, position?: [number, number, number], rotation?: [number, number, number] }) => {
   switch (modelName) {
     case 'hall':
-      return <HallModel position={position} />;
+      return <HallModel position={position} rotation={rotation} />;
     case 'food':
-      return <FoodModel position={position} />;
+      return <FoodModel position={position} rotation={rotation} />;
     case 'tech':
-      return <TechModel position={position} />;
+      return <TechModel position={position} rotation={rotation} />;
     case 'wood':
-      return <WoodModel position={position} />;
+      return <WoodModel position={position} rotation={rotation} />;
+    case 'display_led':
+      return <DisplayLedModel position={position} rotation={rotation} />;
+    case 'detmay':
+      return <DetmayModel position={position} rotation={rotation} />;
+    case 'sankhau':
+      return <SankhauModel position={position} rotation={rotation} />;
+    case 'thucong':
+      return <ThucongModel position={position} rotation={rotation} />;
+    case 'booth_thuysan':
+      return <BoothThuysanModel position={position} rotation={rotation} />;
     default:
       return null;
   }
@@ -90,16 +106,33 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
         <Suspense fallback={<LoadingPlaceholder position={[0, 0, 0]} />}>
           <SingleModel modelName="hall" position={[0, 0, 0]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, 10]} />}>
-          <SingleModel modelName="food" position={[-10, 0.1, 10]} />
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+          <SingleModel modelName="sankhau" position={[0, 0.1, -45]} />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[10, 0, -10]} />}>
-          <SingleModel modelName="tech" position={[10, 0.1, -10]} />
+          <SingleModel modelName="tech" position={[-15, 0.1, -30]} rotation={[0, -4.7, 0]} />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="wood" position={[-10, 0.1, -10]} />
+          <SingleModel modelName="thucong" position={[-15, 0.1, -10]} rotation={[0, -4.7, 0]} />
         </Suspense>
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+          <SingleModel modelName="booth_thuysan" position={[-15, 0.1, 7]} rotation={[0, -4.7, 0]} />
+        </Suspense>      
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+          <SingleModel modelName="wood" position={[15, 0.1, -30]} rotation={[0, 9.4, 0]} />
+        </Suspense>
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+          <SingleModel modelName="detmay" position={[15, 0.1, -13]} />
+        </Suspense>
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, 10]} />}>
+          <SingleModel modelName="food" position={[15, 0.1, 7]} rotation={[0, 9.4, 0]}/>
+        </Suspense>
+        {/* <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+          <SingleModel modelName="display_led" position={[-10, 0.1, -10]} />s
+        </Suspense> */}
+
       </>
+
     );
   }
 
@@ -267,6 +300,11 @@ export default function GltfViewer() {
         <option value="food" className="bg-white dark:bg-black text-black dark:text-white">Food</option>
         <option value="tech" className="bg-white dark:bg-black text-black dark:text-white">Tech</option>
         <option value="wood" className="bg-white dark:bg-black text-black dark:text-white">Wood</option>
+        <option value="display_led" className="bg-white dark:bg-black text-black dark:text-white">Display LED</option>
+        <option value="detmay" className="bg-white dark:bg-black text-black dark:text-white">Detmay</option>
+        <option value="sankhau" className="bg-white dark:bg-black text-black dark:text-white">Sankhau</option>
+        <option value="thucong" className="bg-white dark:bg-black text-black dark:text-white">Thucong</option>
+        <option value="booth_thuysan" className="bg-white dark:bg-black text-black dark:text-white">Booth Thuysan</option>
       </select>
     </div>
   );
@@ -286,11 +324,11 @@ export default function GltfViewer() {
         <CameraControls type={controlType} cameraPositions={cameraPositions} />
         <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
       </Canvas>
-      <CameraPositionForm 
+      {/* <CameraPositionForm 
         onSubmit={handleAddCameraPosition} 
         cameraPosition={cameraPosition}
         onGoTo={handleGoTo}
-      />
+      /> */}
       <Leva />
     </div>
   );

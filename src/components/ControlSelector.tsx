@@ -35,21 +35,21 @@ interface ControlSelectorProps {
 
 export function ControlSelector({ type, onChange }: ControlSelectorProps) {
   return (
-    <div className="fixed top-4 left-32 z-20 bg-white/80 dark:bg-black/80 p-2 rounded-lg shadow-lg">
+    <div className="fixed top-4 left-48 z-20 bg-white/80 dark:bg-black/80 p-2 rounded-lg shadow-lg">
       <select 
         value={type}
         onChange={(e) => onChange(e.target.value as ControlType)}
         className="bg-transparent border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1 text-black dark:text-white"
       >
         <option value="orbit" className="bg-white dark:bg-black text-black dark:text-white">Orbit Controls</option>
-        <option value="trackball" className="bg-white dark:bg-black text-black dark:text-white">Trackball Controls</option>
+        {/* <option value="trackball" className="bg-white dark:bg-black text-black dark:text-white">Trackball Controls</option>
         <option value="firstPerson" className="bg-white dark:bg-black text-black dark:text-white">First Person Controls</option>
         <option value="fly" className="bg-white dark:bg-black text-black dark:text-white">Fly Controls</option>
         <option value="map" className="bg-white dark:bg-black text-black dark:text-white">Map Controls</option>
         <option value="drag" className="bg-white dark:bg-black text-black dark:text-white">Drag Controls</option>
         <option value="pointerLock" className="bg-white dark:bg-black text-black dark:text-white">Pointer Lock Controls</option>
         <option value="transform" className="bg-white dark:bg-black text-black dark:text-white">Transform Controls</option>
-        <option value="arcball" className="bg-white dark:bg-black text-black dark:text-white">Arcball Controls</option>
+        <option value="arcball" className="bg-white dark:bg-black text-black dark:text-white">Arcball Controls</option> */}
         <option value="dragFPS" className="bg-white dark:bg-black text-black dark:text-white">Drag FPS Controls</option>
       </select>
     </div>

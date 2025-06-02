@@ -173,7 +173,7 @@ type GLTFResult = GLTF & {
 }
 
 export function Model(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('/food/food-transformed.glb') as unknown as GLTFResult
+  const { nodes, materials } = useGLTF('/VR/food/food-transformed.glb') as unknown as GLTFResult
   return (
     <group {...props} dispose={null}>
       <group position={[-1.141, -0.031, 1.206]} rotation={[Math.PI / 2, 0, 0]} scale={0.001}>
@@ -272,4 +272,4 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/food/food-transformed.glb')
+useGLTF.preload('/VR/food/food-transformed.glb')
