@@ -106,26 +106,26 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
         <Suspense fallback={<LoadingPlaceholder position={[0, 0, 0]} />}>
           <SingleModel modelName="hall" position={[0, 0, 0]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -45]} />}>
           <SingleModel modelName="sankhau" position={[0, 0.1, -45]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[10, 0, -10]} />}>
-          <SingleModel modelName="tech" position={[-15, 0.1, -30]} rotation={[0, -4.7, 0]} />
+        <Suspense fallback={<LoadingPlaceholder position={[-11, 0.1, -10]} />}>
+          <SingleModel modelName="detmay" position={[-11, 0.1, -10]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="thucong" position={[-15, 0.1, -10]} rotation={[0, -4.7, 0]} />
+        <Suspense fallback={<LoadingPlaceholder position={[-12, 0.1, 15]} />}>
+          <SingleModel modelName="tech" position={[-12, 0.1, 15]} rotation={[0, -4.7, 0]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="booth_thuysan" position={[-15, 0.1, 7]} rotation={[0, -4.7, 0]} />
-        </Suspense>      
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="wood" position={[15, 0.1, -30]} rotation={[0, 9.4, 0]} />
+        <Suspense fallback={<LoadingPlaceholder position={[-11, 0.1, 40]} />}>
+          <SingleModel modelName="wood" position={[-11, 0.1, 40]} rotation={[0, 0, 0]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
-          <SingleModel modelName="detmay" position={[15, 0.1, -13]} />
+        <Suspense fallback={<LoadingPlaceholder position={[11, 0.1, -10]} />}>
+          <SingleModel modelName="booth_thuysan" position={[11, 0.1, -10]} rotation={[0, 4.7, 0]} />
+        </Suspense>     
+        <Suspense fallback={<LoadingPlaceholder position={[10, 0.1, 13]} />}>
+          <SingleModel modelName="thucong" position={[10, 0.1, 13]} rotation={[0, 4.7, 0]} />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-10, 0, 10]} />}>
-          <SingleModel modelName="food" position={[15, 0.1, 7]} rotation={[0, 9.4, 0]}/>
+        <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 40]} />}>
+          <SingleModel modelName="food" position={[12, 0.1, 40]} rotation={[0, 9.4, 0]}/>
         </Suspense>
         {/* <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -10]} />}>
           <SingleModel modelName="display_led" position={[-10, 0.1, -10]} />s
